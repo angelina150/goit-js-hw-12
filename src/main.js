@@ -12,16 +12,16 @@ const userList = document.querySelector('.user-list');
 const loader = document.querySelector('.loader');
 const loadMoreBtn = document.querySelector('.js-load-more');
 const galleryLightbox = new SimpleLightbox('.user-list a', {});
-let currentPage = 35;
+let currentPage = 1;
 let searchedValue = '';
 let cardHeight = 0;
 
+loadMoreBtn.classList.add('is-hidden');
 const onSearchFormSubmit = async event => {
   try {
     userList.innerHTML = '';
     event.preventDefault();
     loader.classList.remove('is-hidden');
-    loadMoreBtn.classList.add('is-hidden');
     searchedValue = searchForm.elements.user_query.value;
     currentPage = 1;
     const response = await fetchPhotos(searchedValue, currentPage);
@@ -40,7 +40,9 @@ const onSearchFormSubmit = async event => {
       .join('');
     userList.innerHTML = galleryCardsTemplate;
     galleryLightbox.refresh();
+    if (response.data.hits.length < response.data.totalHits) {
     loadMoreBtn.classList.remove('is-hidden');
+    }
   } catch (error) {
     iziToast.error({
       message:
